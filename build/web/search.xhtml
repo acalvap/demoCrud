@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Search ticket information</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:commandButton action="index?faces-redirect=true" value="Back" icon="ui-icon-arrowthick-1-w" />
+        </h:form>
+        <h:form id="form">
+            <p:growl id="messages" showDetail="true" />
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel value="Please Select Ticket Number:" />
+                <p:selectOneMenu value="#{ticketsBean.ticket}" editable="true" label="Please Select Ticket Number:" filter="true" id="ulist2">
+                    <f:selectItem itemLabel="Select One" itemValue="" />
+                    <f:selectItems value="#{ticketsBean.tickets}" var="ticket" itemLabel="#{ticket.codigoTicket}" itemValue="#{ticket}" />
+                </p:selectOneMenu>
+            </h:panelGrid>
+            <p:commandButton value="Search" update=":form:ticketTable" type="Submit" icon="ui-icon-search" action="#{ticketsBean.searchByCodigoTicket()}" />
+            <br/>
+            <p:spacer></p:spacer>
+            <p:dataTable var="ticket" id="ticketTable" editable="true" value="#{ticketsBean.searchByCodigoTicketList}">
+                <f:facet name="header">
+                    Row Editing
+                </f:facet>
+                <p:ajax event="rowEdit" listener="#{ticketsBean.onRowEdit}" update=":form:messages" />
+                <p:ajax event="rowEditCancel" listener="#{ticketsBean.onCancel}" update=":form:messages" />
+                
+                <p:column headerText="RecordNo">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{ticket.codigoTicket}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText id="modelInput" value="#{ticket.codigoTicket}" style="width:100%" />
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="Comments">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{ticket.comentarios}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{ticket.comentarios}" style="width:100%" />
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="Due Date">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{ticket.fechaEmision}">
+                                <f:convertDateTime type="date" pattern="dd-MMM-yyyy" />
+                            </h:outputText>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:calendar value="#{ticket.fechaEmision}" style="width:100%" label="DatePosted:" required="true" pattern="dd/MM/yyyy" effect="slideDown" requiredMessage="Please Enter Due Date!" navigator="true" showButtonPanel="true" yearRange="c-60:c+60" />
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="Priority">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{ticket.tktPrioridadTicket.nombre}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu value="#{ticket.tktPrioridadTicket}" editable="true" label="Choose Priority" filter="true">
+                                <f:selectItem itemLabel="Select One" itemValue="" />
+                                <f:selectItems value="#{ticketsBean.prioridadTickets}" var="priority" itemLabel="#{priority.nombre}" itemValue="#{priority}" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="Status">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{ticket.tktEstadosTicket.nombre}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu value="#{ticket.tktEstadosTicket}" editable="true" label="Choose Status" filter="true">
+                                <f:selectItem itemLabel="Select One" itemValue="" />
+                                <f:selectItems value="#{ticketsBean.estadosTickets}" var="estatus" itemLabel="#{estatus.nombre}" itemValue="#{estatus}" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="Edit" style="width:100px">
+                    <p:rowEditor />
+                </p:column>
+                <p:column headerText="Delete">
+                    <p:commandButton value="Delete" icon="ui-icon-trash" update="form:ticketTable" type="button" onclick="PF('confirmDialog').show()" />  
+                    <p:confirmDialog message="Are you sure you want to delete this ticket? Record once deleted can not be retrieved." header="Deleting" severity="alert" widgetVar="confirmDialog">  
+                        <p:commandButton value="Yes Sure" action="#{ticketsBean.deleteTicket(ticket)}" oncomplete="PF('confirmDialog').hide()" />  
+                        <p:commandButton value="Not Yet" onclick="PF('confirmDialog').hide();" type="button" />  
+                    </p:confirmDialog>  
+                </p:column>  
+            </p:dataTable>  
+        </h:form>
+    </h:body>
+</html>

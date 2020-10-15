@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>All ticket information</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:commandButton action="search?faces-redirect=true" icon="ui-icon-search" value="Search" />
+        </h:form>
+        <p:spacer></p:spacer>
+        <h:form id="form1">
+            <p:dataTable id="dataTable" var="ticket" paginator="true" rows="5" value="#{ticketsBean.tickets}">
+                <p:column headerText="Ticket No.">
+                    <h:outputText value="#{ticket.codigoTicket}" />
+                </p:column>
+                <p:column headerText="Comments">
+                    <h:outputText value="#{ticket.comentarios}" />
+                </p:column>
+                <p:column headerText="Status">
+                    <h:outputText value="#{ticket.tktEstadosTicket.nombre}" />
+                </p:column>
+                <p:column headerText="Priority">
+                    <h:outputText value="#{ticket.tktPrioridadTicket.nombre}" />
+                </p:column>
+                <p:column headerText="Case Owner">
+                    <h:outputText value="#{ticket.genPersonalEmpresa.primerApellido}" />
+                </p:column>
+                <p:column headerText="Due Date">
+                    <h:outputText value="#{ticket.fechaEmision}">
+                        <f:convertDateTime type="date" pattern="dd-MMM-yyyy" />
+                    </h:outputText>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        <h:panelGroup>
+            <h3>Add Ticket Information</h3>
+            <h:form>
+                <p>
+                    Comments:
+                    <p:inputText value="#{ticketsBean.newTicket.comentarios}" />
+                </p>
+                <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                    <p>
+                        Choose Case Owner:
+                    </p>
+                    <p:selectOneMenu value="#{ticketsBean.newTicket.genPersonalEmpresa}" editable="true" label="Choose Case Owner" filter="true">
+                        <f:selectItem itemLabel="Select One" itemValue="" />
+                        <f:selectItems value="#{ticketsBean.personalEmpresa}" var="personal" itemLabel="#{personal.primerApellido}" itemValue="#{personal}" />
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                    <p>
+                        Choose Priority:
+                    </p>
+                    <p:selectOneMenu value="#{ticketsBean.newTicket.tktPrioridadTicket}" editable="true" label="Choose Priority" filter="true">
+                        <f:selectItem itemLabel="Select One" itemValue="" />
+                        <f:selectItems value="#{ticketsBean.prioridadTickets}" var="priority" itemLabel="#{priority.nombre}" itemValue="#{priority}" />
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                <p>
+                    Due Date:
+                    <p:calendar value="#{ticketsBean.newTicket.fechaEmision}" label="DatePosted:" required="true" pattern="dd/MMM/yyyy" effect="slideDown" requiredMessage="Please Enter Date of Posting!" navigator="true" showButtonPanel="true" yearRange="c-60:c+60" />
+                </p>
+                <p>
+                    Remark:
+                    <p:inputTextarea value="#{userBean.newuser.remark}" /></p>
+                <p>
+                    <p:commandButton icon="ui-icon-plusthick" update=":form1:dataTable" type="submit" value="add" action="#{ticketsBean.addTicket()}" />
+                </p>
+            </h:form>
+        </h:panelGroup>
+    </h:body>
+</html>
+
